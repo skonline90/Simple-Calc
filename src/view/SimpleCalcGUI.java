@@ -1,5 +1,7 @@
 package view;
 
+import java.awt.Font;
+
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -15,7 +17,7 @@ public class SimpleCalcGUI extends Application
     Button b0, b1, b2, b3, b4, b5, b6, b7, b8, b9;
     Button bPlus, bMinus, bMulti, bDivide, bEquals;
     double accumulator;
-    boolean isAccuFull = false;
+    boolean isAccuFull = false, isReseted = false;
     String selectedOperator = null;
 
     @Override
@@ -34,6 +36,10 @@ public class SimpleCalcGUI extends Application
         interactionArea.setPadding(new Insets(10));
         interactionArea.setMinWidth(230);
         interactionArea.setMinHeight(50);
+        javafx.scene.text.Font font = new javafx.scene.text.Font(20);
+        interactionArea.setFont(font);
+        interactionArea.setStyle(
+                "-fx-background-color: #a0aabf; -fx-padding: 8px; -fx-background-insets: 8px;");
     }
 
     private void initButtons()
@@ -53,7 +59,7 @@ public class SimpleCalcGUI extends Application
         bMulti = new Button("*");
         bDivide = new Button("/");
         bEquals = new Button("=");
-        Button[] numberButtons = {b1, b2, b3, b4, b5, b6, b7, b8, b9};
+        Button[] numberButtons = {b0, b1, b2, b3, b4, b5, b6, b7, b8, b9};
         Button[] operatorButtons = {bPlus, bMinus, bMulti, bDivide};
         for (Button button : new Button[] {b1, b2, b3, b4, b5, b6, b7, b8, b9,
                 bPlus, bMinus, bMulti, bDivide, bEquals})
@@ -66,31 +72,39 @@ public class SimpleCalcGUI extends Application
 
         for (Button button : numberButtons)
             button.setOnAction(e -> {
+                if (!isReseted)
+                {
+                    interactionArea.setText("");
+                    isReseted = true;
+                }
                 String text = interactionArea.getText();
                 if (text.length() + 1 < 12)
                 {
                     interactionArea.setText(text + button.getText());
                 }
             });
+
         for (Button button : operatorButtons)
         {
             button.setOnAction(e -> {
-                String text = interactionArea.getText();
-                if (text.length() == 0)
+                if (selectedOperator == null)
                 {
-                    accumulator = 0;
+                    String text = interactionArea.getText();
+                    if (text.length() == 0)
+                    {
+                        accumulator = 0;
+                    }
+                    else
+                    {
+                        accumulator = Double.parseDouble(text);
+                    }
+                    interactionArea.setText("");
+                    isAccuFull = true;
                 }
-                else
-                {
-                    accumulator = Double.parseDouble(text);
-                }
-                interactionArea.setText("");
-                isAccuFull = true;
                 selectedOperator = button.getText();
             });
         }
         bEquals.setOnAction(e -> {
-
             String text = interactionArea.getText();
             if (text.length() > 0)
             {
@@ -100,6 +114,8 @@ public class SimpleCalcGUI extends Application
                     double equals = applyOpperand(selectedOperator, operand2);
                     interactionArea.setText(Double.toString(equals));
                     isAccuFull = false;
+                    isReseted = false;
+                    selectedOperator = null;
                 }
             }
         });
