@@ -1,7 +1,5 @@
 package view;
 
-import java.awt.Font;
-
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -151,6 +149,7 @@ public class SimpleCalcGUI extends Application
         Scene scene = new Scene(vbox);
         primaryStage.setScene(scene);
         primaryStage.show();
+        primaryStage.setResizable(false);
     }
 
     private double applyOpperand(String operator, double operand)
